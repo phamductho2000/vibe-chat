@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  AppShell,
   Avatar,
   Badge,
   Box,
@@ -59,7 +58,11 @@ function MessageBubble({ msg }: { msg: Message }) {
             {msg.at}
           </Text>
           {mine ? (
-            <Text size="xs" c="dimmed" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <Text
+              size="xs"
+              c="dimmed"
+              style={{ fontVariantNumeric: 'tabular-nums' }}
+            >
               ✓✓
             </Text>
           ) : null}
@@ -205,20 +208,27 @@ export function TelegramChat() {
       : 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)'
 
   return (
-    <AppShell
-      padding={0}
-      navbar={{
-        width: 360,
-        breakpoint: 'sm',
-      }}
-      styles={{
-        main: {
-          height: '100dvh',
-        },
+    <Box
+      h="100%"
+      style={{
+        display: 'flex',
+        minHeight: 0,
       }}
     >
-      <AppShell.Navbar p="sm">
-        <Stack gap="sm" h="100%">
+      <Box
+        style={{
+          width: 360,
+          flexShrink: 0,
+          borderRight: `1px solid ${
+            colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
+          }`,
+          display: 'flex',
+          flexDirection: 'column',
+          padding: 12,
+          minHeight: 0,
+        }}
+      >
+        <Stack gap="sm" h="100%" style={{ minHeight: 0 }}>
           <Group justify="space-between" wrap="nowrap">
             <Text fw={700}>Chats</Text>
             <ActionIcon variant="subtle" radius="xl" aria-label="New chat">
@@ -255,130 +265,129 @@ export function TelegramChat() {
             </Stack>
           </ScrollArea>
         </Stack>
-      </AppShell.Navbar>
+      </Box>
 
-      <AppShell.Main>
+      <Box
+        h="100%"
+        style={{
+          flex: 1,
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          background: chatBg,
+          backgroundImage: wallpaper,
+          backgroundSize: '14px 14px',
+        }}
+      >
         <Box
-          h="100%"
+          px="md"
+          py="sm"
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            background: chatBg,
-            backgroundImage: wallpaper,
-            backgroundSize: '14px 14px',
+            borderBottom: `1px solid ${
+              colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
+            }`,
+            backdropFilter: 'blur(8px)',
+            background:
+              colorScheme === 'dark'
+                ? 'rgba(20,20,24,0.85)'
+                : 'rgba(255,255,255,0.85)',
           }}
         >
-          <Box
-            px="md"
-            py="sm"
-            style={{
-              borderBottom: `1px solid ${
-                colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
-              }`,
-              backdropFilter: 'blur(8px)',
-              background:
-                colorScheme === 'dark'
-                  ? 'rgba(20,20,24,0.85)'
-                  : 'rgba(255,255,255,0.85)',
-            }}
-          >
-            <Group justify="space-between" wrap="nowrap">
-              <Group wrap="nowrap" gap="sm" style={{ minWidth: 0 }}>
-                <Avatar
-                  radius="xl"
-                  size={38}
-                  style={{
-                    background: selectedChat?.avatarColor ?? theme.colors.gray[5],
-                    color: 'white',
-                  }}
-                >
-                  {(selectedChat?.title ?? '?').slice(0, 1).toUpperCase()}
-                </Avatar>
-                <Box style={{ minWidth: 0 }}>
-                  <Text fw={700} size="sm" truncate>
-                    {selectedChat?.title ?? 'Select a chat'}
-                  </Text>
-                  <Text size="xs" c="dimmed" truncate>
-                    {selectedChat?.subtitle ?? ' '}
-                  </Text>
-                </Box>
-              </Group>
-              <Group gap={6} wrap="nowrap">
-                <ActionIcon variant="subtle" radius="xl" aria-label="Search">
-                  ⌕
-                </ActionIcon>
-                <ActionIcon variant="subtle" radius="xl" aria-label="More">
-                  ⋮
-                </ActionIcon>
-              </Group>
-            </Group>
-          </Box>
-
-          <ScrollArea
-            viewportRef={viewportRef}
-            type="auto"
-            offsetScrollbars
-            style={{ flex: 1 }}
-          >
-            <Box px="md" py="lg">
-              <Stack gap="sm">
-                {selectedMessages.map((m) => (
-                  <MessageBubble key={m.id} msg={m} />
-                ))}
-                {selectedMessages.length === 0 ? (
-                  <Text size="sm" c="dimmed" ta="center" mt="lg">
-                    No messages yet
-                  </Text>
-                ) : null}
-              </Stack>
-            </Box>
-          </ScrollArea>
-
-          <Box
-            px="md"
-            py="sm"
-            style={{
-              borderTop: `1px solid ${
-                colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
-              }`,
-              background:
-                colorScheme === 'dark' ? theme.colors.dark[7] : 'white',
-            }}
-          >
-            <Group align="flex-end" gap="sm" wrap="nowrap">
-              <ActionIcon variant="subtle" radius="xl" aria-label="Attach">
-                +
-              </ActionIcon>
-              <Textarea
-                value={draft}
-                onChange={(e) => setDraft(e.currentTarget.value)}
-                placeholder="Message"
-                autosize
-                minRows={1}
-                maxRows={6}
-                radius="lg"
-                style={{ flex: 1 }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    send()
-                  }
-                }}
-              />
-              <ActionIcon
-                variant="filled"
+          <Group justify="space-between" wrap="nowrap">
+            <Group wrap="nowrap" gap="sm" style={{ minWidth: 0 }}>
+              <Avatar
                 radius="xl"
-                aria-label="Send"
-                onClick={send}
-                disabled={!draft.trim()}
+                size={38}
+                style={{
+                  background: selectedChat?.avatarColor ?? theme.colors.gray[5],
+                  color: 'white',
+                }}
               >
-                ➤
+                {(selectedChat?.title ?? '?').slice(0, 1).toUpperCase()}
+              </Avatar>
+              <Box style={{ minWidth: 0 }}>
+                <Text fw={700} size="sm" truncate>
+                  {selectedChat?.title ?? 'Select a chat'}
+                </Text>
+                <Text size="xs" c="dimmed" truncate>
+                  {selectedChat?.subtitle ?? ' '}
+                </Text>
+              </Box>
+            </Group>
+            <Group gap={6} wrap="nowrap">
+              <ActionIcon variant="subtle" radius="xl" aria-label="Search">
+                ⌕
+              </ActionIcon>
+              <ActionIcon variant="subtle" radius="xl" aria-label="More">
+                ⋮
               </ActionIcon>
             </Group>
-          </Box>
+          </Group>
         </Box>
-      </AppShell.Main>
-    </AppShell>
+
+        <ScrollArea
+          viewportRef={viewportRef}
+          type="auto"
+          offsetScrollbars
+          style={{ flex: 1 }}
+        >
+          <Box px="md" py="lg">
+            <Stack gap="sm">
+              {selectedMessages.map((m) => (
+                <MessageBubble key={m.id} msg={m} />
+              ))}
+              {selectedMessages.length === 0 ? (
+                <Text size="sm" c="dimmed" ta="center" mt="lg">
+                  No messages yet
+                </Text>
+              ) : null}
+            </Stack>
+          </Box>
+        </ScrollArea>
+
+        <Box
+          px="md"
+          py="sm"
+          style={{
+            borderTop: `1px solid ${
+              colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
+            }`,
+            background: colorScheme === 'dark' ? theme.colors.dark[7] : 'white',
+          }}
+        >
+          <Group align="flex-end" gap="sm" wrap="nowrap">
+            <ActionIcon variant="subtle" radius="xl" aria-label="Attach">
+              +
+            </ActionIcon>
+            <Textarea
+              value={draft}
+              onChange={(e) => setDraft(e.currentTarget.value)}
+              placeholder="Message"
+              autosize
+              minRows={1}
+              maxRows={6}
+              radius="lg"
+              style={{ flex: 1 }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  send()
+                }
+              }}
+            />
+            <ActionIcon
+              variant="filled"
+              radius="xl"
+              aria-label="Send"
+              onClick={send}
+              disabled={!draft.trim()}
+            >
+              ➤
+            </ActionIcon>
+          </Group>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 
