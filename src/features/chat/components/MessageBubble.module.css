@@ -1,0 +1,149 @@
+/* Base — không đuôi, modifier thêm góc + pseudo */
+.bubbleOutgoing {
+  position: relative;
+  background: #228be6;
+  padding: 8px 12px;
+  max-width: min(480px, 85vw);
+  box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.08);
+  color: #fff;
+  overflow: visible;
+}
+
+.bubbleIncoming {
+  position: relative;
+  background: #ffffff;
+  padding: 8px 12px;
+  max-width: min(480px, 85vw);
+  box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.06);
+  color: #111b21;
+  overflow: visible;
+}
+
+.bubbleOutgoing > *,
+.bubbleIncoming > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Outgoing: đuôi góc phải — first = trên, last/single = dưới, middle = không đuôi */
+.outMiddle {
+  border-radius: 12px;
+}
+
+.outFirst {
+  border-radius: 12px 12px 12px 12px;
+}
+
+.outFirst::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  right: -5px;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 12px 12px 0 0;
+  border-color: #228be6 transparent transparent transparent;
+}
+
+.outLast {
+  border-radius: 12px 12px 12px 12px;
+}
+
+.outLast::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  right: -5px;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 12px 12px;
+  border-color: transparent transparent #228be6 transparent;
+}
+
+/* Incoming: đuôi góc trái — first = trên, last/single = dưới */
+.inMiddle {
+  border-radius: 12px;
+}
+
+.inFirst {
+  border-radius: 12px 12px 12px 12px;
+}
+
+.inFirst::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  left: -5px;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 12px 12px 0 0;
+  border-color: #ffffff transparent transparent transparent;
+}
+
+.inLast {
+  border-radius: 12px 12px 12px 12px;
+}
+
+.inLast::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  left: -5px;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 12px 12px;
+  border-color: transparent transparent #ffffff transparent;
+}
+
+.avatarOutgoing {
+  background: linear-gradient(180deg, #f97316 0%, #ec4899 100%) !important;
+  border: none;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
+.avatarIncoming {
+  background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%) !important;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
+/* Dark */
+:global([data-mantine-color-scheme='dark']) .bubbleIncoming {
+  background: #2b2b2b;
+  color: #e9edef;
+  box-shadow: none;
+}
+
+:global([data-mantine-color-scheme='dark']) .bubbleOutgoing {
+  background: #005c4b;
+  color: #e9edef;
+}
+
+:global([data-mantine-color-scheme='dark']) .outFirst::after {
+  border-color: #005c4b transparent transparent transparent;
+}
+
+:global([data-mantine-color-scheme='dark']) .outLast::after {
+  border-color: transparent transparent #005c4b transparent;
+}
+
+:global([data-mantine-color-scheme='dark']) .inFirst::after {
+  border-color: #2b2b2b transparent transparent transparent;
+}
+
+:global([data-mantine-color-scheme='dark']) .inLast::after {
+  border-color: transparent transparent #2b2b2b transparent;
+}
+
+:global([data-mantine-color-scheme='light']) .bubbleIncoming {
+  border: 1px solid #e8e8e8;
+}

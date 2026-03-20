@@ -1,10 +1,13 @@
+import { MantineProvider } from '@mantine/core'
+import '@mantine/core/styles.css'
+import '@mantine/core/styles.layer.css'
+import { ContextMenuProvider } from 'mantine-contextmenu'
+import 'mantine-contextmenu/styles.layer.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import '@mantine/core/styles.css'
-import './index.css'
-import App from './App.tsx'
-import { MantineProvider } from '@mantine/core'
 import { BrowserRouter } from 'react-router-dom'
+import App from './App.tsx'
+import 'mantine-contextmenu/styles.css';
 import { AuthProvider } from './store/auth/auth'
 
 createRoot(document.getElementById('root')!).render(
@@ -12,7 +15,9 @@ createRoot(document.getElementById('root')!).render(
     <MantineProvider defaultColorScheme="auto">
       <AuthProvider>
         <BrowserRouter>
-          <App />
+          <ContextMenuProvider shadow="md" borderRadius="md">
+            <App />
+          </ContextMenuProvider>
         </BrowserRouter>
       </AuthProvider>
     </MantineProvider>

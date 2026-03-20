@@ -3,110 +3,80 @@ import {
   Avatar,
   Badge,
   Box,
+  Container,
   Group,
-  Paper,
   Text,
   TextInput,
   useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core'
+import { IconCircleCheck, IconCopy, IconDotsVertical, IconMessageCircleShare, IconMessageReply, IconMicrophone, IconPencil, IconPhone, IconPinned, IconSearch, IconTrash, IconX } from '@tabler/icons-react'
+import { useContextMenu, type ContextMenuItemOptions } from 'mantine-contextmenu'
+import { useEffect, useMemo, useState } from 'react'
 import { Virtuoso } from 'react-virtuoso'
+import { AttachFileInput } from '../../../components/AttachFileInput'
+import EmojiInput from '../../../components/EmojiInput'
+import { mockConversation, type ChatMessage } from '../data/mockConversation'
+import { computeGroupPositions } from '../utils/computeGroupPosition'
+import { MessageBubble } from './MessageBubble'
 
-type Bubble = {
-  id: string
-  from: 'me' | 'them'
-  text: string
-  at: string
-}
-
-const mockConversation: Bubble[] = [
-  { id: '1', from: 'them', text: '?', at: '11:38' },
+const contextMenuItems: ContextMenuItemOptions[] = [
   {
-    id: '2',
-    from: 'me',
-    text: 'Đại ca',
-    at: '11:38',
+    key: 'reply',
+    icon: <IconMessageReply size={20} />,
+    onClick: () => console.log('copy'),
   },
   {
-    id: '3',
-    from: 'me',
-    text: 'cái ịn lúc bên vẽ bên vẽ cho e cái header có cái p-api-key để làm gì ấy nhỉ',
-    at: '11:38',
+    key: 'copy',
+    icon: <IconCopy size={20} />,
+    onClick: () => console.log('copy'),
   },
-  { id: '4', from: 'them', text: 'để verify signature', at: '11:39' },
   {
-    id: '5',
-    from: 'me',
-    text: 'e tưởng dùng cái secret key',
-    at: '11:41',
+    key: 'edit',
+    icon: <IconPencil size={20} />,
+    onClick: () => console.log('download'),
   },
-  { id: '6', from: 'them', text: 'ờ nhỉ', at: '11:42' },
-  { id: '7', from: 'them', text: 'kỳ băng cái secret key mà', at: '11:42' },
-  { id: '8', from: 'them', text: 'đủ hiểu dễ lắm ạ luôn', at: '11:43' },
-  { id: '9', from: 'me', text: 'lú vc', at: '11:44' },
-  { id: '10', from: 'them', text: 'lú vc', at: '11:44' },
-  { id: '11', from: 'me', text: 'lú vc', at: '11:44' },
-  { id: '12', from: 'them', text: 'lú vc', at: '11:44' },
-  { id: '13', from: 'me', text: 'lú vc', at: '11:44' },
-  { id: '14', from: 'them', text: 'lú vc', at: '11:44' },
-  { id: '15', from: 'me', text: 'lú vc', at: '11:44' },
-  { id: '16', from: 'them', text: 'lú vc', at: '11:44' },
-  { id: '17', from: 'me', text: 'lú vc', at: '11:44' },
-  { id: '18', from: 'them', text: 'lú vc', at: '11:44' },
-  { id: '19', from: 'me', text: 'lú vc', at: '11:44' },
-  { id: '20', from: 'them', text: 'lú vc', at: '11:44' },
-  { id: '21', from: 'me', text: 'lú vc', at: '11:44' },
-  { id: '22', from: 'them', text: 'lú vc', at: '11:44' },
-  { id: '23', from: 'me', text: 'lú vc', at: '11:44' },
-  { id: '24', from: 'them', text: 'lú vc', at: '11:44' },
-  { id: '25', from: 'me', text: 'lú vc', at: '11:44' },
-  { id: '26', from: 'them', text: 'lú vc', at: '11:44' },
-  { id: '27', from: 'me', text: 'lú vc', at: '11:44' },
-]
-
-function BubbleItem({ item }: { item: Bubble }) {
-  const theme = useMantineTheme()
-  const { colorScheme } = useMantineColorScheme()
-  const mine = item.from === 'me'
-
-  return (
-    <Group justify={mine ? 'flex-end' : 'flex-start'}>
-      <Paper
-        radius="md"
-        px="sm"
-        py={6}
-        shadow="xs"
-        style={{
-          maxWidth: 460,
-          border: `1px solid ${
-            colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
-          }`,
-          background: mine
-            ? colorScheme === 'dark'
-              ? 'rgba(167,243,208,0.25)'
-              : '#e8ffd8'
-            : colorScheme === 'dark'
-              ? theme.colors.dark[6]
-              : 'white',
-        }}
-      >
-        <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>
-          {item.text}
-        </Text>
-        <Text size="xs" c="dimmed" ta="right" mt={2}>
-          {item.at}
-        </Text>
-      </Paper>
-    </Group>
-  )
-}
+  {
+    key: 'pin',
+    icon: <IconPinned size={20} />,
+    onClick: () => console.log('download'),
+  },
+  {
+    key: 'forward',
+    icon: <IconMessageCircleShare size={20} />,
+    onClick: () => console.log('download'),
+  },
+  {
+    key: 'select',
+    icon: <IconCircleCheck size={20} />,
+    onClick: () => console.log('download'),
+  },
+  {
+    key: 'delete',
+    icon: <IconTrash size={20} />,
+    onClick: () => console.log('download'),
+  },
+];
 
 export function ChatContent() {
+  const { showContextMenu, isContextMenuVisible } = useContextMenu()
   const theme = useMantineTheme()
   const { colorScheme } = useMantineColorScheme()
+  const [contextMenuMessageId, setContextMenuMessageId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!isContextMenuVisible) setContextMenuMessageId(null)
+  }, [isContextMenuVisible])
+
+  const groupPositions = useMemo(() => computeGroupPositions(mockConversation), [])
+
+  const contextMenuHandler = useMemo(
+    () => showContextMenu(contextMenuItems),
+    [showContextMenu],
+  )
 
   const lineColor = colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
-  const listItems: Array<{ type: 'day' | 'message' | 'footer'; label?: string; item?: Bubble }> = [
+  const listItems: Array<{ type: 'day' | 'message' | 'footer'; label?: string; item?: ChatMessage }> = [
     { type: 'day', label: 'March 6' },
     ...mockConversation.map((item) => ({ type: 'message' as const, item })),
     { type: 'footer', label: 'Friday' },
@@ -146,17 +116,17 @@ export function ChatContent() {
                 125K
               </Text>
             </Box>
-            <ActionIcon variant="subtle" aria-label="Close">
-              ✕
+            <ActionIcon variant="subtle" aria-label="Close" radius="xl">
+              <IconX size={24} />
             </ActionIcon>
-            <ActionIcon variant="subtle" aria-label="Search">
-              ⌕
+            <ActionIcon variant="subtle" aria-label="Search" radius="xl">
+              <IconSearch size={24} />
             </ActionIcon>
-            <ActionIcon variant="subtle" aria-label="Call">
-              ☏
+            <ActionIcon variant="subtle" aria-label="Call" radius="xl">
+              <IconPhone size={24} />
             </ActionIcon>
-            <ActionIcon variant="subtle" aria-label="More">
-              ⋮
+            <ActionIcon variant="subtle" aria-label="More" radius="xl">
+              <IconDotsVertical size={24} />
             </ActionIcon>
           </Group>
         </Group>
@@ -166,10 +136,10 @@ export function ChatContent() {
         style={{
           flex: 1,
           minHeight: 0,
-        //   background:
-        //     colorScheme === 'dark'
-        //       ? 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, #1a1b1e 0)'
-        //       : 'radial-gradient(circle at 1px 1px, rgba(47,125,68,0.12) 1px, #dff2d8 0)',
+          //   background:
+          //     colorScheme === 'dark'
+          //       ? 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, #1a1b1e 0)'
+          //       : 'radial-gradient(circle at 1px 1px, rgba(47,125,68,0.12) 1px, #dff2d8 0)',
           backgroundSize: '16px 16px',
         }}
       >
@@ -189,10 +159,37 @@ export function ChatContent() {
               )
             }
 
+            const messageId = row.item!.id
+            const isRowHighlighted = contextMenuMessageId === messageId
+
             return (
-              <Box px="xl" py={4}>
-                <BubbleItem item={row.item!} />
-              </Box>
+              <Container fluid
+                style={{
+                  margin: '16px 0',
+                  borderRadius: theme.radius.md,
+                  transition: 'background-color 120ms ease',
+                  backgroundColor: isRowHighlighted
+                    ? colorScheme === 'dark'
+                      ? 'rgba(99, 102, 241, 0.22)'
+                      : 'rgba(99, 102, 241, 0.14)'
+                    : undefined,
+                }}
+              >
+                <Container>
+                  <MessageBubble
+                    onContextMenu={(e) => {
+                      setContextMenuMessageId(messageId)
+                      contextMenuHandler(e as never)
+                    }}
+                    text={row.item!.text}
+                    time={row.item!.at}
+                    from={row.item!.from}
+                    read={row.item!.from === 'me'}
+                    groupPosition={groupPositions.get(messageId) ?? 'single'}
+                    images={row.item!.images}
+                  />
+                </Container>
+              </Container>
             )
           }}
         />
@@ -200,22 +197,18 @@ export function ChatContent() {
 
       <Box
         px="md"
-        py="xs"
+        // py="xs"
         style={{
           borderTop: `1px solid ${lineColor}`,
-          background: colorScheme === 'dark' ? theme.colors.dark[7] : 'white',
+          background: 'transparent',
         }}
       >
         <Group wrap="nowrap">
-          <ActionIcon variant="subtle" radius="xl" aria-label="Emoji">
-            ☺
-          </ActionIcon>
-          <TextInput placeholder="Message" radius="xl" style={{ flex: 1 }} />
-          <ActionIcon variant="subtle" radius="xl" aria-label="Attach">
-            📎
-          </ActionIcon>
+          <EmojiInput />
+          <TextInput size='lg' variant="unstyled" placeholder="Message" style={{ flex: 1 }} />
+          <AttachFileInput />
           <ActionIcon variant="subtle" radius="xl" aria-label="Voice">
-            🎤
+            <IconMicrophone size={26} />
           </ActionIcon>
         </Group>
       </Box>
