@@ -1,9 +1,11 @@
 import { Avatar, Box, Group, Stack, Text, useMantineColorScheme } from '@mantine/core'
 import { IconChecks } from '@tabler/icons-react'
 import type { HTMLAttributes } from 'react'
+import type { ChatMessage } from '../data/mockConversation'
 import type { MessageGroupPosition } from '../utils/computeGroupPosition'
 import { ChatImageGrid, type ChatImageItem } from './ChatImageGrid'
 import classes from './MessageBubble.module.css'
+import { MessageDocumentCard } from './MessageDocumentCard'
 
 export type MessageBubbleProps = {
   text: string
@@ -15,11 +17,11 @@ export type MessageBubbleProps = {
   /** Chuột phải / context menu (vd. mantine-contextmenu) */
   onContextMenu?: HTMLAttributes<HTMLDivElement>['onContextMenu']
   images?: ChatImageItem[]
+  document?: ChatMessage['document']
 }
 
 const timeOutgoingLight = '#667781'
 const timeOutgoingDark = '#99beb7'
-const checkGreen = '#34b76d'
 
 function outgoingTailClass(pos: MessageGroupPosition) {
   if (pos === 'middle') return classes.outMiddle
@@ -41,6 +43,7 @@ export function MessageBubble({
   groupPosition,
   onContextMenu,
   images,
+  document,
 }: MessageBubbleProps) {
   const { colorScheme } = useMantineColorScheme()
   const mine = from === 'me'
@@ -58,36 +61,41 @@ export function MessageBubble({
 
   const bubble = (
     <Box className={bubbleClass}>
-      <Stack gap={6}>
+      <Stack gap={1}>
         {images && images.length > 0 ? <ChatImageGrid images={images} /> : null}
-        <Group gap={8} align="flex-end" wrap="nowrap" justify="space-between">
-          {text ? (
-            <Text
-              size="sm"
-              style={{
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-                flex: 1,
-                minWidth: 0,
-                lineHeight: 1.35,
-              }}
-            >
-              {text}
-            </Text>
-          ) : (
-            <Box style={{ flex: 1, minWidth: 0 }} />
-          )}
-          <Group gap={4} wrap="nowrap" align="center" style={{ flexShrink: 0, marginBottom: 1 }}>
+        {document ? <MessageDocumentCard document={document} /> : null}
+        <Stack className={classes.contentMessage} gap={1} justify="flex-end" >
+          {
+            text ? (
+              <Text
+                size="sm"
+                style={{
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  flex: 1,
+                  minWidth: 0,
+                  lineHeight: 1.35,
+                  paddingTop: 10,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                }}
+              >
+                {text}
+              </Text>
+            ) : null
+          }
+
+          <Group className={classes.contentMessage} gap={4} wrap="nowrap" align="flex-start" justify="flex-end" style={{ flexShrink: 0, marginBottom: 1, paddingRight: 10 }}>
             <Text size="xs" style={{ color: timeColor }}>
               {time}
             </Text>
             {mine && read ? (
-              <Text size="xs" style={{ color: checkGreen }} component="span">
+              <Text size="xs" style={{ color: timeColor }} component="span">
                 <IconChecks size={16} />
               </Text>
             ) : null}
           </Group>
-        </Group>
+        </Stack>
       </Stack>
     </Box>
   )

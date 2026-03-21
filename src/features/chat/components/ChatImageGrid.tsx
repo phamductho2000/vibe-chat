@@ -74,7 +74,7 @@ export function ChatImageGrid({
           src={item.src}
           alt={item.alt ?? 'Ảnh chat'}
           fit="cover"
-          radius="md"
+          // radius="md"
           mah={320}
           maw="100%"
           w="100%"

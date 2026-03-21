@@ -5,6 +5,7 @@ import {
   Box,
   Container,
   Group,
+  Stack,
   Text,
   TextInput,
   useMantineColorScheme,
@@ -14,10 +15,12 @@ import { IconCircleCheck, IconCopy, IconDotsVertical, IconMessageCircleShare, Ic
 import { useContextMenu, type ContextMenuItemOptions } from 'mantine-contextmenu'
 import { useEffect, useMemo, useState } from 'react'
 import { Virtuoso } from 'react-virtuoso'
-import { AttachFileInput } from '../../../components/AttachFileInput'
-import EmojiInput from '../../../components/EmojiInput'
-import { mockConversation, type ChatMessage } from '../data/mockConversation'
+import type { ChatMessage } from '../data/mockConversation'
+import { messageHistoryMock } from '../mock'
 import { computeGroupPositions } from '../utils/computeGroupPosition'
+import { messageHistoryListToChatMessages } from '../utils/messageHistoryToChatMessage'
+import { AttachFileInput } from './AttachFileInput'
+import EmojiInput from './EmojiInput'
 import { MessageBubble } from './MessageBubble'
 
 const contextMenuItems: ContextMenuItemOptions[] = [
@@ -68,7 +71,12 @@ export function ChatContent() {
     if (!isContextMenuVisible) setContextMenuMessageId(null)
   }, [isContextMenuVisible])
 
-  const groupPositions = useMemo(() => computeGroupPositions(mockConversation), [])
+  const chatMessages = useMemo(
+    () => messageHistoryListToChatMessages(messageHistoryMock, 'conv-1'),
+    [],
+  )
+
+  const groupPositions = useMemo(() => computeGroupPositions(chatMessages), [chatMessages])
 
   const contextMenuHandler = useMemo(
     () => showContextMenu(contextMenuItems),
@@ -78,7 +86,7 @@ export function ChatContent() {
   const lineColor = colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
   const listItems: Array<{ type: 'day' | 'message' | 'footer'; label?: string; item?: ChatMessage }> = [
     { type: 'day', label: 'March 6' },
-    ...mockConversation.map((item) => ({ type: 'message' as const, item })),
+    ...chatMessages.map((item) => ({ type: 'message' as const, item })),
     { type: 'footer', label: 'Friday' },
   ]
 
@@ -166,7 +174,6 @@ export function ChatContent() {
               <Container fluid
                 style={{
                   margin: '16px 0',
-                  borderRadius: theme.radius.md,
                   transition: 'background-color 120ms ease',
                   backgroundColor: isRowHighlighted
                     ? colorScheme === 'dark'
@@ -187,6 +194,7 @@ export function ChatContent() {
                     read={row.item!.from === 'me'}
                     groupPosition={groupPositions.get(messageId) ?? 'single'}
                     images={row.item!.images}
+                    document={row.item!.document}
                   />
                 </Container>
               </Container>
@@ -203,6 +211,25 @@ export function ChatContent() {
           background: 'transparent',
         }}
       >
+        <Group wrap="nowrap">
+          <ActionIcon variant="subtle" radius="xl" aria-label="Reply">
+            <IconMessageReply size={26} />
+          </ActionIcon>
+          <Box bg="rgb(229 229 229)" p={10} mt={10} style={{ flex: 1, borderRadius: 5, borderLeft: '4px solid #228be6' }} >
+            <Stack gap={0}>
+              <Text size="sm" fw={400} c="dimmed">
+                Write a message...
+              </Text>
+              <Text size="sm" fw={400} c="dimmed">
+                Write a message...
+              </Text>
+            </Stack>
+
+          </Box>
+          <ActionIcon variant="subtle" radius="xl" aria-label="Voice">
+            <IconX size={26} />
+          </ActionIcon>
+        </Group>
         <Group wrap="nowrap">
           <EmojiInput />
           <TextInput size='lg' variant="unstyled" placeholder="Message" style={{ flex: 1 }} />

@@ -6,6 +6,10 @@ export type ChatMessage = {
   text: string
   at: string
   images?: ChatImageItem[]
+  document?: {
+    fileName: string
+    size?: number
+  }
 }
 
 /** Ảnh cố định từ Picsum (seed → URL ổn định) */

@@ -52,7 +52,7 @@
   min-height: 0;
   min-width: 0;
   overflow: hidden;
-  /* border-radius: calc(var(--mantine-radius-md) - 2px); */
+  border-radius: calc(var(--mantine-radius-md) - 2px) calc(var(--mantine-radius-md) - 2px) 0 0;
 }
 
 .cell img,
@@ -76,6 +76,7 @@
   max-width: var(--chat-image-single-max, 280px);
   /* border-radius: var(--mantine-radius-md); */
   overflow: hidden;
+  border-radius: calc(var(--mantine-radius-md) - 2px) calc(var(--mantine-radius-md) - 2px) 0 0;
 }
 
 .single :global(.mantine-Image-root) {

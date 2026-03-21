@@ -1,18 +1,18 @@
 /* Base — không đuôi, modifier thêm góc + pseudo */
 .bubbleOutgoing {
   position: relative;
-  background: #228be6;
-  padding: 8px 12px;
+  background: rgba(66, 153, 225, 0.15);
+  /* padding: 8px 12px; */
   max-width: min(480px, 85vw);
   box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.08);
-  color: #fff;
+  color: #111b21;
   overflow: visible;
 }
 
 .bubbleIncoming {
   position: relative;
   background: #ffffff;
-  padding: 8px 12px;
+  /* padding: 8px 12px; */
   max-width: min(480px, 85vw);
   box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.06);
   color: #111b21;
@@ -27,7 +27,7 @@
 
 /* Outgoing: đuôi góc phải — first = trên, last/single = dưới, middle = không đuôi */
 .outMiddle {
-  border-radius: 12px;
+  /* border-radius: 12px; */
 }
 
 .outFirst {
@@ -35,7 +35,7 @@
 }
 
 .outFirst::after {
-  content: '';
+  /* content: '';
   position: absolute;
   z-index: 0;
   right: -5px;
@@ -44,7 +44,7 @@
   height: 0;
   border-style: solid;
   border-width: 12px 12px 0 0;
-  border-color: #228be6 transparent transparent transparent;
+  border-color: #228be6 transparent transparent transparent; */
 }
 
 .outLast {
@@ -52,7 +52,7 @@
 }
 
 .outLast::after {
-  content: '';
+  /* content: '';
   position: absolute;
   z-index: 0;
   right: -5px;
@@ -61,20 +61,20 @@
   height: 0;
   border-style: solid;
   border-width: 0 0 12px 12px;
-  border-color: transparent transparent #228be6 transparent;
+  border-color: transparent transparent #228be6 transparent; */
 }
 
 /* Incoming: đuôi góc trái — first = trên, last/single = dưới */
 .inMiddle {
-  border-radius: 12px;
+  /* border-radius: 12px; */
 }
 
 .inFirst {
-  border-radius: 12px 12px 12px 12px;
+  /* border-radius: 12px 12px 12px 12px; */
 }
 
 .inFirst::after {
-  content: '';
+  /* content: '';
   position: absolute;
   z-index: 0;
   left: -5px;
@@ -83,7 +83,7 @@
   height: 0;
   border-style: solid;
   border-width: 12px 12px 0 0;
-  border-color: #ffffff transparent transparent transparent;
+  border-color: #ffffff transparent transparent transparent; */
 }
 
 .inLast {
@@ -91,7 +91,7 @@
 }
 
 .inLast::after {
-  content: '';
+  /* content: '';
   position: absolute;
   z-index: 0;
   left: -5px;
@@ -100,7 +100,7 @@
   height: 0;
   border-style: solid;
   border-width: 0 0 12px 12px;
-  border-color: transparent transparent #ffffff transparent;
+  border-color: transparent transparent #ffffff transparent; */
 }
 
 .avatarOutgoing {
@@ -115,6 +115,11 @@
   flex-shrink: 0;
   align-self: flex-end;
 }
+
+.contentMessage {
+  /* padding: 5px; */
+}
+
 
 /* Dark */
 :global([data-mantine-color-scheme='dark']) .bubbleIncoming {
